@@ -3,6 +3,7 @@
 Command terminal is about 200 characters wide (side-to-side) by about 50 characters long (top-to-bottom)
 Ratio of Card Height To Width: 1.4:1
 Monitor Dimensions: 157 wide, 58 long
+Laptop Dimensions: 211 wide, 49 long
 '''
 
 # Importing Libraries
@@ -12,8 +13,8 @@ import csv
 
 # Variables
 data = []
-terminalWidth = 157 # user dependent
-terminalLength = 58 # user dependent
+terminalWidth = 211 # user dependent
+terminalLength = 49 # user dependent
 cardWidth = round(terminalWidth/5.81481)
 cardHeight = round(terminalLength/3.2222)
 masterList = []
