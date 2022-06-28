@@ -8,6 +8,7 @@ import keyboard
 os.system('cls')
 
 # Initial variables
+dimensions = []
 delay = 1
 duration = 2
 list = []
@@ -25,6 +26,9 @@ while proceed:
 
 # Setting the width of the command prompt based on user input
 commandPromptWidth = len(list) - 1
+
+# Adding the width to the 'dimensions' list
+dimensions.append(commandPromptWidth)
 
 # Resetting variables
 os.system('cls')
@@ -45,6 +49,9 @@ while proceed:
 
 # Setting the length of the command prompt based on user input
 commandPromptLength = len(list) - 1
+
+# Adding the length to the 'dimensions' list
+dimensions.append(commandPromptLength)
 
 # Printing information
 print(f"Command Prompt Width: {commandPromptWidth}\nCommand Prompt Length: {commandPromptLength}")
