@@ -1,4 +1,8 @@
 // Efficacy dependent on quality of "turnTableWords.txt"
+// Usage:
+//  Pass the letters on the board in as a command line argument as a single string, with the center letter
+//  as the first letter of the string 
+// Ex. Letters on the board: w,h,m,l,s,o,e -> whmlsoe
 
 #include <iostream>
 #include <fstream>
