@@ -54,6 +54,7 @@ int main(){
     std::vector<int> eighthRow;
     std::vector<int> ninthRow;
     std::vector<std::vector<int>> masterVector;
+    /*
     std::cout << "Enter a zero in any empty spots" << "\n";
     std::cout << "1st Row: ";
     std::cin >> first;
@@ -73,17 +74,29 @@ int main(){
     std::cin >> eighth;
     std::cout << "9th Row: ";
     std::cin >> ninth;
-
+    */
+    first = "200410007";
+    second = "080700002";
+    third = "000900050";
+    fourth = "007200609";
+    fifth = "010006500";
+    sixth = "000000080";
+    seventh = "005602490";
+    eighth = "006800025";
+    ninth = "700540060";
     for (int i = 0; i < first.length(); i++){
-        masterVector[0].push_back(first[i]);
-        masterVector[1].push_back(second[i]);
-        masterVector[2].push_back(third[i]);
-        masterVector[3].push_back(fourth[i]);
-        masterVector[4].push_back(fifth[i]);
-        masterVector[5].push_back(sixth[i]);
-        masterVector[6].push_back(seventh[i]);
-        masterVector[7].push_back(eighth[i]);
-        masterVector[8].push_back(ninth[i]);
+        std::cout << "Here \n";
+        masterVector[0].push_back(static_cast<int>(first[i] - 48));
+        std::cout << "First \n";
+        masterVector[1].push_back(static_cast<int>(second[i] - 48));
+        masterVector[2].push_back(static_cast<int>(third[i] - 48));
+        masterVector[3].push_back(static_cast<int>(fourth[i] - 48));
+        masterVector[4].push_back(static_cast<int>(fifth[i] - 48));
+        masterVector[5].push_back(static_cast<int>(sixth[i] - 48));
+        masterVector[6].push_back(static_cast<int>(seventh[i] - 48));
+        masterVector[7].push_back(static_cast<int>(eighth[i] - 48));
+        masterVector[8].push_back(static_cast<int>(ninth[i] - 48));
+        printResults(masterVector);
     }
     int currentNumber;
 
