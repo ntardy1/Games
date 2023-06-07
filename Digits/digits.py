@@ -37,6 +37,54 @@ def check(remainingGivens, currentNumber, target):
             return True
     return False
 
+# Function to check if any of the given numbers in newGivens can combine to make the target
+def intermediateCheck(newGivens, target):
+    for given in newGivens:
+        temp_1 = list(newGivens)
+        temp_2 = list(temp_1)
+        temp_1.remove(given)
+        temp_2.remove(given)
+        for given_1 in temp_1:
+            temp_2.remove(given_1)
+            for given_2 in temp_2:
+                # Addition first step
+                if (given + given_1 + given_2 == target):
+                    return True
+                elif (given + given_1 - given_2 == target):
+                    return True
+                elif (given + given_1 * given_2 == target):
+                    return True
+                elif (given_2 != 0 and given + given_1 / given_2 == target):
+                    return True
+                # Subtraction first step
+                elif (given - given_1 + given_2 == target):
+                    return True
+                elif (given - given_1 - given_2 == target):
+                    return True
+                elif (given - given_1 * given_2 == target):
+                    return True
+                elif (given_2 != 0 and given - given_1 / given_2 == target):
+                    return True
+                # Multiplication first step
+                elif (given * given_1 + given_2 == target):
+                    return True
+                elif (given * given_1 - given_2 == target):
+                    return True
+                elif (given * given_1 * given_2 == target):
+                    return True
+                elif (given_2 != 0 and given * given_1 / given_2 == target):
+                    return True
+                # Division first step
+                elif (given_1 != 0 and given / given_1 + given_2 == target):
+                    return True
+                elif (given_1 != 0 and given / given_1 - given_2 == target):
+                    return True
+                elif (given_1 != 0 and given / given_1 * given_2 == target):
+                    return True
+                elif (given_1 != 0 and given_2 != 0 and given / given_1 / given_2 == target):
+                    return True
+    return False
+
 # Function to remove a matrix from a tensor and check if that was the last matrix
 def removeAndCheck(tensor, matrix, remainingGivens, currentNumber, target):
     tensor.remove(matrix)
@@ -141,20 +189,18 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                     for column_2 in list(range(columns_2)): # Going through each column of the current matrix_3
                         numbersUsed = numbersUsed[0:2]
                         firstNumberUsed_1 = tempGivens_1[tempFirstTensor.index(matrix_3)] # Keeping track of the first number used in the second operation
-                        print(numbersUsed)
-                        print(f"FirstNumberUsed_1: {firstNumberUsed_1}")
                         numbersUsed.append(firstNumberUsed_1)
                         if any(givens[column_2] == num for num in tempGivens_1) and all(givens[column_2] != num for num in numbersUsed):
                             secondNumberUsed_1 = matrix_3[0][matrix_3[0].index(givens[column_2])] # Keeping track of the second number used in the second operation
-                            print(f"SecondNumberUsed_1: {secondNumberUsed_1}")
                             numbersUsed.append(secondNumberUsed_1)
                         else:
                             continue
-                        if (secondNumberUsed == secondNumberUsed_1):
-                            print('Problem')
                         tempGivens_2.remove(secondNumberUsed_1)
                         secondNumber = matrix_3[operation_2+1][column_2] # +1 because the first row is just the givens
                         newGivens.append(secondNumber)
+                        result = intermediateCheck(newGivens + tempGivens_2, target)
+                        if (result):
+                            break
                         for matrix_4 in tempSecondTensor: # Removing the matrix that corresponds to the second number used
                             if all(secondNumberUsed_1 != num for num in matrix_4[0]):
                                 tempSecondTensor.remove(matrix_4)
@@ -176,13 +222,15 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                                     tempGivens_3.remove(secondNumberUsed_2)
                                     thirdNumber = matrix_5[operation_2+1][matrix_5[0].index(secondNumberUsed_2)]  # +1 because the first row is just the givens
                                     newGivens.append(thirdNumber)
+                                    result = intermediateCheck(newGivens + tempGivens_3, target)
+                                    if (result):
+                                        break
                                     for matrix_6 in tempThirdTensor: # Removing the matrix that corresponds to the second number used
                                         if all(secondNumberUsed_2 != num for num in matrix_6[0]):
                                             tempThirdTensor.remove(matrix_6)
                                             break
                                     # Performing the "second stage" of operations
                                     secondTensor = createTensor(newGivens, operations, [])
-                                    print(f"New Givens: {newGivens}")
                                     secondTensor = fillTensor(secondTensor, newGivens, operations)
                                     for matrix_1_1 in secondTensor: # Iterating through each number in the newGivens list
                                         columns_1_1 = len(newGivens) - 1
