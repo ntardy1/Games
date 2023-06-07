@@ -9,11 +9,9 @@ import os
 
 # Variables
 numbers = list(range(6))
-operations = []
-result = 0 # the current result of all operations
+operations = list(range(4))
 firstTensor = []
 tempFirstTensor = []
-operations = list(range(4))
 result = False
 newGivens = []
 
@@ -45,11 +43,13 @@ def removeAndCheck(tensor, matrix, remainingGivens, currentNumber, target):
 
 # Function to create a tensor
 def createTensor(givens, operations, tensor):
+    tempOperations = list(operations)
+    tempOperations.append(tempOperations[len(tempOperations) - 1]+1)
     columns = len(givens) - 1
     for num in givens:
-        tensor.append([0]*(len(operations)+1))
-        for operation in operations:
-            tensor[givens.index(num)][operations.index(operation)] = [0]*columns
+        tensor.append([0]*(len(tempOperations)))
+        for operation in tempOperations:
+            tensor[givens.index(num)][tempOperations.index(operation)] = [0]*columns
     return tensor
 
 # Function to fill a tensor
@@ -72,8 +72,12 @@ def fillTensor(tensor, givens, operations):
                 matrix[row] = [givens[tensor.index(matrix)] * givens[column] for column in range(columns)]
                 matrix[row].remove(givens[tensor.index(matrix)] * givens[tensor.index(matrix)])
             elif (row == 4): # Division
-                matrix[row] = [givens[tensor.index(matrix)] / givens[column] if givens[tensor.index(matrix)] % givens[column] == 0 else 0 for column in range(columns)]
-                matrix[row].remove(1)
+                for column in range(columns-1):
+                    if (givens[tensor.index(matrix)] % givens[column] == 0 and givens[column] != 0):
+                        matrix[row][column] = givens[tensor.index(matrix)] / givens[column]
+                    else:
+                        matrix[row][column] = 0
+                matrix[row].remove(1) if any(num == 1 for num in matrix[row]) else None
     return tensor
 
 # Algorithm
@@ -106,14 +110,6 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
     tempFirstTensor.remove(matrix_1) # Removing the current matrix
     tempGivens_1.remove(tempGivens_1[firstTensor.index(matrix_1)]) # Removing the first number used from tempGivens_1
     for operation in operations: # Going through each row of the current matrix_1
-        for column in range(columns): # Going through each column of the current matrix_1
-            firstNumberUsed = givens[firstTensor.index(matrix_1)] # Keeping track of the first number used for the first operation
-            secondNumberUsed = matrix_1[0][column] # Keeping track of the second number used for the first operation
-            tempGivens_1.remove(secondNumberUsed)
-            firstNumber = matrix_1[operation][column] # +1 because the first row is just the givens
-            result = check(tempGivens_1, firstNumber, target)
-            if (result):
-                break
         for column in list(range(columns_1)): # Going through each column of the current matrix_1
             newGivens = [] # Resetting the newGivens list
             firstNumberUsed = givens[firstTensor.index(matrix_1)] # Keeping track of the first number used for the first operation
@@ -125,8 +121,9 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
             if (result):
                 break
             for matrix_2 in tempFirstTensor: # Removing the matrix that corresponds to the second number used
-                tempFirstTensor.remove(matrix_2) if all(secondNumberUsed != num for num in matrix_2[0]) else None
-                break
+                if all(secondNumberUsed != num for num in matrix_2[0]):
+                    tempFirstTensor.remove(matrix_2)
+                    break
             # Obtaining a second step operation
             for matrix_3 in tempFirstTensor: # Iterating through to get the second number (that is the result of a previous operation)
                 columns_2 = len(givens) - 1
@@ -145,8 +142,9 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                         secondNumber = matrix_3[operation_2+1][column_2] # +1 because the first row is just the givens
                         newGivens.append(secondNumber)
                         for matrix_4 in tempSecondTensor: # Removing the matrix that corresponds to the second number used
-                            tempSecondTensor.remove(matrix_4) if all(secondNumberUsed_1 != num for num in matrix_4[0]) else None
-                            break
+                            if all(secondNumberUsed_1 != num for num in matrix_4[0]):
+                                tempSecondTensor.remove(matrix_4)
+                                break
                         # Obtaining a third step operation
                         for matrix_5 in tempSecondTensor: # Iterating through to get the second number (that is the result of a previous operation)
                             columns_3 = len(givens) - 1
@@ -157,18 +155,17 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                             for operation_3 in operations: # Going through each row of the current matrix_5
                                 for column_3 in list(range(columns_3)): # Going through each column of the current matrix_5
                                     firstNumberUsed_2 = tempGivens_2[tempSecondTensor.index(matrix_5)]
-                                    if any(givens[column_3] == num for num in tempGivens_2):
-                                        secondNumberUsed_2 = matrix_5[0][column_3] # Keeping track of the second number used in the second operation
-                                    else:
-                                        continue
+                                    secondNumberUsed_2 = tempGivens_3[0] # Keeping track of the second number used in the third operation
                                     tempGivens_3.remove(secondNumberUsed_2)
                                     thirdNumber = matrix_5[operation_2+1][column_3] # +1 because the first row is just the givens
                                     newGivens.append(thirdNumber)
                                     for matrix_6 in tempThirdTensor: # Removing the matrix that corresponds to the second number used
-                                        tempThirdTensor.remove(matrix_6) if all(secondNumberUsed_2 != num for num in matrix_6[0]) else None
-                                        break
+                                        if all(secondNumberUsed_2 != num for num in matrix_6[0]):
+                                            tempThirdTensor.remove(matrix_6)
+                                            break
                                     # Performing the "second stage" of operations
                                     secondTensor = createTensor(newGivens, operations, [])
+                                    print(f"New Givens: {newGivens}")
                                     secondTensor = fillTensor(secondTensor, newGivens, operations)
                                     for matrix_1_1 in secondTensor: # Iterating through each number in the newGivens list
                                         columns_1_1 = len(newGivens) - 1
@@ -185,13 +182,33 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                                                 firstNumber_1 = matrix_1_1[operation+1][column_1_1] # +1 because the first row is just givens
                                                 newGivens_1.append(firstNumber_1)
                                                 result = check(tempNewGivens, firstNumber_1, target)
+                                                if (result):
+                                                    break
                                                 tempNewGivens.insert(column_1_1, secondNumberUsed_1_1)
+                                            if (result):
+                                                break
+                                        if (result):
+                                            break
+                                    if (result):
+                                        break
                                     tempGivens_3.insert(tempSecondTensor.index(matrix_5), secondNumberUsed_2)
                                     tempThirdTensor.insert(tempGivens_3.index(secondNumberUsed_2), matrix_6)
                                     newGivens.remove(thirdNumber)
+                                if (result):
+                                    break
+                            if (result):
+                                break
+                        if (result):
+                            break
                         newGivens.remove(secondNumber)
                         tempGivens_2.insert(tempFirstTensor.index(matrix_3), secondNumberUsed_1)
                         tempSecondTensor.insert(tempGivens_2.index(secondNumberUsed_1), matrix_4)
+                    if (result):
+                        break
+                if (result):
+                    break
+            if (result):
+                break
             newGivens.remove(firstNumber)
             tempGivens_1.insert(column, secondNumberUsed) # Replacing the second number used
             tempFirstTensor.insert(tempGivens_1.index(secondNumberUsed), matrix_2) # Replacing the matrix corresponding to the second number used
