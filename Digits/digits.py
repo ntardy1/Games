@@ -45,16 +45,28 @@ def check(remainingGivens, currentNumber, target):
         return True
     for given in remainingGivens:
         if (given + currentNumber == target):
-            printResults(0, given, "+", currentNumber)
+            numbersUsed.append(given)
+            numbersUsed.append(currentNumber)
+            operationsUsed.append(0)
+            printResults()
             return True
         elif (given - currentNumber == target):
-            printResults(0, given, "-", currentNumber)
+            numbersUsed.append(given)
+            numbersUsed.append(currentNumber)
+            operationsUsed.append(1)
+            printResults()
             return True
         elif (given * currentNumber == target):
-            printResults(0, given, "*", currentNumber)
+            numbersUsed.append(given)
+            numbersUsed.append(currentNumber)
+            operationsUsed.append(2)
+            printResults()
             return True
         elif (currentNumber != 0 and given / currentNumber == target):
-            printResults(0, given, "/", currentNumber)
+            numbersUsed.append(given)
+            numbersUsed.append(currentNumber)
+            operationsUsed.append(3)
+            printResults()
             return True
     return False
 
