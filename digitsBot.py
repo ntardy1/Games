@@ -23,7 +23,7 @@ firstNumberUsed_2 = -1
 
 # Functions
 
-# Function to print the solution steps
+# Function to print the sdolution steps
 def printResults(*args):
     for index in range(0, len(numbersUsed), 2):
         print(f"{numbersUsed[index]} {operations_possibilities[operationsUsed[(int(index/2))]]} {numbersUsed[index+1]} = {newGivens[int(index/2)]}")
