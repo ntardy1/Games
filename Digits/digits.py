@@ -10,7 +10,9 @@ import os
 # Variables
 numbers = list(range(6))
 numbersUsed = []
+operationsUsed = []
 operations = list(range(4))
+operations_possibilities = ["+", "-", "*", "/"]
 firstTensor = []
 tempFirstTensor = []
 result = False
@@ -20,20 +22,39 @@ firstNumberUsed_1 = -1
 firstNumberUsed_2 = -1
 
 # Functions
+
+# Function to print the solution steps
+def printResults(*args):
+    for index in range(0, len(numbersUsed), 2):
+        print(f"{numbersUsed[index]} {operations_possibilities[operationsUsed[(int(index/2))]]} {numbersUsed[index+1]} = {newGivens[int(index/2)]}")
+    if (len(args) > 0):
+        if (args[0] == 0): # came from the "check" function
+            print(f"{args[1]} {operations_possibilities[operations_possibilities.index(args[2])]} {args[3]} = {target}") # args[2] specifies the operation
+        elif (args[0] == 1): # came from the "intermediateCheck" function
+            if (args[1] == 0): # parentheses around the first operation
+                print(f"({args[2]} {operations_possibilities[operations_possibilities.index(args[3])]} {args[4]}) {operations_possibilities[operations_possibilities.index(args[5])]} {args[6]} = {target}")
+            elif (args[1] == 1): # parentheses around the second operation
+                print(f"{args[2]} {operations_possibilities[operations_possibilities.index(args[3])]} ({args[4]} {operations_possibilities[operations_possibilities.index(args[5])]} {args[6]}) = {target}")
     
 # Function to see if any of the remaining givens can be combined with a current number to make the target
 # or if the current number is equal to the target
 def check(remainingGivens, currentNumber, target):
     if (currentNumber == target):
+        newGivens.append(currentNumber)
+        printResults()
         return True
     for given in remainingGivens:
         if (given + currentNumber == target):
+            printResults(0, given, "+", currentNumber)
             return True
-        if (given - currentNumber == target):
+        elif (given - currentNumber == target):
+            printResults(0, given, "-", currentNumber)
             return True
-        if (given * currentNumber == target):
+        elif (given * currentNumber == target):
+            printResults(0, given, "*", currentNumber)
             return True
-        if (currentNumber != 0 and given / currentNumber == target):
+        elif (currentNumber != 0 and given / currentNumber == target):
+            printResults(0, given, "/", currentNumber)
             return True
     return False
 
@@ -47,50 +68,112 @@ def intermediateCheck(newGivens, target):
         for given_1 in temp_1:
             temp_2.remove(given_1)
             for given_2 in temp_2:
+                # Parentheses around the first operation
                 # Addition first step
-                if (given + given_1 + given_2 == target):
+                if ((given + given_1) + given_2 == target):
+                    printResults(1, 0, given, "+", given_1, "+", given_2)
                     return True
-                elif (given + given_1 - given_2 == target):
+                elif ((given + given_1) - given_2 == target):
+                    printResults(1, 0, given, "+", given_1, "-", given_2)
                     return True
-                elif (given + given_1 * given_2 == target):
+                elif ((given + given_1) * given_2 == target):
+                    printResults(1, 0, given, "+", given_1, "*", given_2)
                     return True
-                elif (given_2 != 0 and given + given_1 / given_2 == target):
+                elif (given_2 != 0 and (given + given_1) / given_2 == target):
+                    printResults(1, 0, given, "+", given_1, "/", given_2)
                     return True
                 # Subtraction first step
-                elif (given - given_1 + given_2 == target):
+                elif ((given - given_1) + given_2 == target):
+                    printResults(1, 0, given, "-", given_1, "+", given_2)
                     return True
-                elif (given - given_1 - given_2 == target):
+                elif ((given - given_1) - given_2 == target):
+                    printResults(1, 0, given, "-", given_1, "-", given_2)
                     return True
-                elif (given - given_1 * given_2 == target):
+                elif ((given - given_1) * given_2 == target):
+                    printResults(1, 0, given, "-", given_1, "*", given_2)
                     return True
-                elif (given_2 != 0 and given - given_1 / given_2 == target):
+                elif (given_2 != 0 and (given - given_1) / given_2 == target):
+                    printResults(1, 0, given, "-", given_1, "/", given_2)
                     return True
                 # Multiplication first step
-                elif (given * given_1 + given_2 == target):
+                elif ((given * given_1) + given_2 == target):
+                    printResults(1, 0, given, "*", given_1, "+", given_2)
                     return True
-                elif (given * given_1 - given_2 == target):
+                elif ((given * given_1) - given_2 == target):
+                    printResults(1, 0, given, "*", given_1, "-", given_2)
                     return True
-                elif (given * given_1 * given_2 == target):
+                elif ((given * given_1) * given_2 == target):
+                    printResults(1, 0, given, "*", given_1, "*", given_2)
                     return True
-                elif (given_2 != 0 and given * given_1 / given_2 == target):
+                elif (given_2 != 0 and (given * given_1) / given_2 == target):
+                    printResults(1, 0, given, "*", given_1, "/", given_2)
                     return True
                 # Division first step
-                elif (given_1 != 0 and given / given_1 + given_2 == target):
+                elif (given_1 != 0 and (given / given_1) + given_2 == target):
+                    printResults(1, 0, given, "/", given_1, "+", given_2)
                     return True
-                elif (given_1 != 0 and given / given_1 - given_2 == target):
+                elif (given_1 != 0 and (given / given_1) - given_2 == target):
+                    printResults(1, 0, given, "/", given_1, "-", given_2)
                     return True
-                elif (given_1 != 0 and given / given_1 * given_2 == target):
+                elif (given_1 != 0 and (given / given_1) * given_2 == target):
+                    printResults(1, 0, given, "/", given_1, "*", given_2)
                     return True
-                elif (given_1 != 0 and given_2 != 0 and given / given_1 / given_2 == target):
+                elif (given_1 != 0 and given_2 != 0 and (given / given_1) / given_2 == target):
+                    printResults(1, 0, given, "/", given_1, "/", given_2)
                     return True
-    return False
-
-# Function to remove a matrix from a tensor and check if that was the last matrix
-def removeAndCheck(tensor, matrix, remainingGivens, currentNumber, target):
-    tensor.remove(matrix)
-    if (len(tensor) == 0):
-        result = check(remainingGivens, currentNumber, target)
-        return result
+                # Parentheses around the second operation
+                # Addition first step
+                if (given + (given_1 + given_2) == target):
+                    printResults(1, 1, given, "+", given_1, "+", given_2)
+                    return True
+                elif (given + (given_1 - given_2) == target):
+                    printResults(1, 1, given, "+", given_1, "-", given_2)
+                    return True
+                elif (given + (given_1 * given_2) == target):
+                    printResults(1, 1, given, "+", given_1, "*", given_2)
+                    return True
+                elif (given_2 != 0 and given + (given_1 / given_2) == target):
+                    printResults(1, 1, given, "+", given_1, "/", given_2)
+                    return True
+                # Subtraction first step
+                elif (given - (given_1 + given_2) == target):
+                    printResults(1, 1, given, "-", given_1, "+", given_2)
+                    return True
+                elif (given - (given_1 - given_2) == target):
+                    printResults(1, 1, given, "-", given_1, "-", given_2)
+                    return True
+                elif (given - (given_1 * given_2) == target):
+                    printResults(1, 1, given, "-", given_1, "*", given_2)
+                    return True
+                elif (given_2 != 0 and given - (given_1 / given_2) == target):
+                    printResults(1, 1, given, "-", given_1, "/", given_2)
+                    return True
+                # Multiplication first step
+                elif (given * (given_1 + given_2) == target):
+                    printResults(1, 1, given, "*", given_1, "+", given_2)
+                    return True
+                elif (given * (given_1 - given_2) == target):
+                    printResults(1, 1, given, "*", given_1, "-", given_2)
+                    return True
+                elif (given * (given_1 * given_2) == target):
+                    printResults(1, 1, given, "*", given_1, "*", given_2)
+                    return True
+                elif (given_2 != 0 and given * (given_1 / given_2) == target):
+                    printResults(1, 1, given, "*", given_1, "/", given_2)
+                    return True
+                # Division first step
+                elif (given_1 + given_2 != 0 and given / (given_1 + given_2) == target):
+                    printResults(1, 1, given, "/", given_1, "+", given_2)
+                    return True
+                elif (given_1 - given_2 != 0 and given / (given_1 - given_2) == target):
+                    printResults(1, 1, given, "/", given_1, "-", given_2)
+                    return True
+                elif (given_1 * given_2 != 0 and given / (given_1 * given_2) == target):
+                    printResults(1, 1, given, "/", given_1, "*", given_2)
+                    return True
+                elif (given_1 * given_2 != 0 and given_2 != 0 and given / (given_1 / given_2) == target):
+                    printResults(1, 1, given, "/", given_1, "/", given_2)
+                    return True
     return False
 
 # Function to create a tensor
@@ -161,6 +244,8 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
     tempFirstTensor.remove(matrix_1) # Removing the current matrix
     tempGivens_1.remove(tempGivens_1[firstTensor.index(matrix_1)]) # Removing the first number used from tempGivens_1
     for operation in operations: # Going through each row of the current matrix_1
+        operationsUsed = [] # Resetting the operationsUsed list
+        operationsUsed.append(operation)
         for column in list(range(columns_1)): # Going through each column of the current matrix_1
             newGivens = [] # Resetting the newGivens list
             numbersUsed = [] # Resetting the numbersUsed list
@@ -186,6 +271,7 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                 tempSecondTensor.remove(matrix_3)
                 tempGivens_2.remove(tempGivens_2[tempFirstTensor.index(matrix_3)])
                 for operation_2 in operations: # Going through each row of the current matrix_3
+                    operationsUsed.append(operation_2)
                     for column_2 in list(range(columns_2)): # Going through each column of the current matrix_3
                         numbersUsed = numbersUsed[0:2]
                         firstNumberUsed_1 = tempGivens_1[tempFirstTensor.index(matrix_3)] # Keeping track of the first number used in the second operation
@@ -196,7 +282,7 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                         else:
                             continue
                         tempGivens_2.remove(secondNumberUsed_1)
-                        secondNumber = matrix_3[operation_2+1][column_2] # +1 because the first row is just the givens
+                        secondNumber = matrix_3[operation_2+1][matrix_3[0].index(givens[column_2])] # +1 because the first row is just the givens
                         newGivens.append(secondNumber)
                         result = intermediateCheck(newGivens + tempGivens_2, target)
                         if (result):
@@ -213,6 +299,7 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                             tempThirdTensor.remove(matrix_5)
                             tempGivens_3.remove(tempGivens_2[tempSecondTensor.index(matrix_5)])
                             for operation_3 in operations: # Going through each row of the current matrix_5
+                                operationsUsed.append(operation_3)
                                 for column_3 in list(range(columns_3)): # Going through each column of the current matrix_5
                                     numbersUsed = numbersUsed[0:4]
                                     firstNumberUsed_2 = tempGivens_2[tempSecondTensor.index(matrix_5)]
@@ -220,7 +307,7 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                                     secondNumberUsed_2 = tempGivens_3[0] # Keeping track of the second number used in the third operation
                                     numbersUsed.append(secondNumberUsed_2)
                                     tempGivens_3.remove(secondNumberUsed_2)
-                                    thirdNumber = matrix_5[operation_2+1][matrix_5[0].index(secondNumberUsed_2)]  # +1 because the first row is just the givens
+                                    thirdNumber = matrix_5[operation_3+1][matrix_5[0].index(secondNumberUsed_2)]  # +1 because the first row is just the givens
                                     newGivens.append(thirdNumber)
                                     result = intermediateCheck(newGivens + tempGivens_3, target)
                                     if (result):
@@ -238,29 +325,33 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                                         tempFirstTensor_1 = list(secondTensor)
                                         tempFirstTensor_1.remove(matrix_1_1) # Removing the current matrix
                                         tempNewGivens.remove(tempNewGivens[secondTensor.index(matrix_1_1)]) # Removing the first number used from tempNewGivens
-                                        for operation in operations: # Going through each row of the current matrix_1_1
+                                        for operation_1_1 in operations: # Going through each row of the current matrix_1_1
                                             for column_1_1 in list(range(columns_1_1)): # Going through each column of the current matrix_1_1
-                                                newGivens_1 = [] # Resetting the newGivens_1 list
+                                                numbersUsed = numbersUsed[0:6]
+                                                operationsUsed.append(operation_1_1)
                                                 firstNumberUsed_1_1 = newGivens[secondTensor.index(matrix_1_1)] # Keeping track of the first number used for the first operation of the second stage
+                                                numbersUsed.append(firstNumberUsed_1_1)
                                                 secondNumberUsed_1_1 = matrix_1_1[0][column_1_1] # Keepging track of the second number used in the first operation of the second stage
+                                                numbersUsed.append(secondNumberUsed_1_1)
                                                 tempNewGivens.remove(secondNumberUsed_1_1)
-                                                firstNumber_1 = matrix_1_1[operation+1][column_1_1] # +1 because the first row is just givens
-                                                newGivens_1.append(firstNumber_1)
+                                                firstNumber_1 = matrix_1_1[operation_1_1+1][column_1_1] # +1 because the first row is just givens
                                                 result = check(tempNewGivens, firstNumber_1, target)
                                                 if (result):
                                                     break
                                                 tempNewGivens.insert(column_1_1, secondNumberUsed_1_1)
+                                                operationsUsed.remove(operation_1_1)
                                             if (result):
                                                 break
                                         if (result):
                                             break
                                     if (result):
                                         break
+                                    newGivens.remove(thirdNumber)
                                     tempGivens_3.insert(tempSecondTensor.index(matrix_5), secondNumberUsed_2)
                                     tempThirdTensor.insert(tempGivens_3.index(secondNumberUsed_2), matrix_6)
-                                    newGivens.remove(thirdNumber)
                                 if (result):
                                     break
+                                operationsUsed.remove(operation_3)
                             if (result):
                                 break
                         if (result):
@@ -270,6 +361,7 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
                         tempSecondTensor.insert(tempGivens_2.index(secondNumberUsed_1), matrix_4)
                     if (result):
                         break
+                    operationsUsed.remove(operation_2)
                 if (result):
                     break
             if (result):
@@ -283,6 +375,6 @@ for matrix_1 in firstTensor: # Iterating through to get the first number (that i
         break
 
 if (result):
-    print('Success')
+    print("Success")
 else:
-    print("Failure")
+    print("Algorithm cannot solve puzzle")
