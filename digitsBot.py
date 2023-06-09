@@ -1,9 +1,3 @@
-'''
-Order of Operations
-1) Make the numerical algorithm
-2) Deal with output
-'''
-
 # Libraries
 import os
 
