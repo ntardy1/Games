@@ -529,24 +529,24 @@ while True:
         chosenCard = newCard()
         # This will be the dealer's hole card
         hiddenCard = createCard("?", "?", 0)
-        # The first card (dealer hole card)
+        # The first card (first player card)
         if (elem == 0):
-            hiddenCard.displayCard(3)
-        # The second card (first player card)
-        elif (elem == 1):
             chosenCard.displayCard(0)
             playerSum += chosenCard.value
             playerCards.append(chosenCard)
-        # The third card (dealer face up card)
+        # The second card (dealer hole card)
+        elif (elem == 1):
+            hiddenCard.displayCard(3)
+        # The third card (second player card)
         elif (elem == 2):
-            chosenCard.displayCard(4)
-            dealerSum += chosenCard.value
-            dealerCards.append(chosenCard)
-        # The fourth card (second player card)
-        elif (elem == 3):
             chosenCard.displayCard(1)
             playerSum += chosenCard.value
             playerCards.append(chosenCard)
+        # The fourth card (dealer face up card)
+        elif (elem == 3):
+            chosenCard.displayCard(4)
+            dealerSum += chosenCard.value
+            dealerCards.append(chosenCard)
         sleep(2)
     # Creating the "main" player
     mainPlayer = createPlayer(playerSum, playerCards, playerWager, playerMoney, playerAccount)
